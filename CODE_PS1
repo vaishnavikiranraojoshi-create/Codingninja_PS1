@@ -1,0 +1,91 @@
+!pip install transformers pandas streamlit gradio beautifulsoup4 requests
+
+import pandas as pd
+from transformers import pipeline
+import re
+import streamlit as st
+import gradio as gr
+
+# Expanded buzzword list
+buzzwords = [
+    "eco-friendly", "natural", "green", "sustainable", "planet-safe", "earth-friendly",
+    "environmentally conscious", "biodegradable", "organic", "eco-conscious", "responsible",
+    "clean", "non-toxic", "chemical-free", "renewable", "ethical", "conscious choice",
+    "better for the planet", "low impact", "green choice", "eco option"
+]
+
+# Certification keywords
+certifications = [
+    "FSC", "GOTS", "B-Corp", "Fairtrade", "USDA Organic", "Cradle-to-Cradle",
+    "ISO 14001", "LEED", "Energy Star", "Rainforest Alliance", "CarbonNeutral",
+    "OEKO-TEX", "EPEAT", "Green Seal"
+]
+
+# Hugging Face NLI model
+classifier = pipeline("text-classification", model="roberta-large-mnli")
+
+def detect_buzzwords(text):
+    return [word for word in buzzwords if word.lower() in text.lower()]
+
+def detect_certifications(text):
+    return [c for c in certifications if c.lower() in text.lower()]
+
+def classify_claim(text):
+    reference = "This product is certified and evidence-based."
+    result = classifier(f"{text} </s> {reference}")
+    label = result[0]['label']
+    if label == "CONTRADICTION":
+        return "Marketing Fluff"
+    elif label == "ENTAILMENT":
+        return "Evidence-Based"
+    else:
+        return "Unverifiable"
+
+def audit_product(text):
+    buzz = detect_buzzwords(text)
+    certs = detect_certifications(text)
+    ml_class = classify_claim(text)
+
+    if certs:
+        classification = "Evidence-Based"
+        reasoning = f"Mentions certification: {', '.join(certs)}"
+    elif buzz:
+        classification = "Marketing Fluff"
+        reasoning = f"Contains vague buzzwords: {', '.join(buzz)} without certification."
+    else:
+        classification = ml_class
+        reasoning = "Fallback to ML model classification."
+
+    return {
+        "Input": text,
+        "Buzzwords": buzz,
+        "Certifications": certs,
+        "Classification": classification,
+        "Reasoning": reasoning
+    }
+
+# Quick tests
+print(audit_product("This shirt is eco-friendly and natural."))
+print(audit_product("This cotton is GOTS-certified and produced by a B-Corp brand."))
+print(audit_product("Our packaging is 100% recyclable and FSC-certified."))
+print(audit_product("Made with sustainable materials for a greener future."))
+
+# Gradio frontend
+def audit_interface(text):
+    result = audit_product(text)
+    return (
+        f"Classification: {result['Classification']}\n"
+        f"Buzzwords: {result['Buzzwords']}\n"
+        f"Certifications: {result['Certifications']}\n"
+        f"Reasoning: {result['Reasoning']}"
+    )
+
+demo = gr.Interface(
+    fn=audit_interface,
+    inputs="text",
+    outputs="text",
+    title="🌱 Green-Truth Auditor",
+    description="Classify product claims as Marketing Fluff or Evidence-Based"
+)
+
+demo.launch(share=True)
