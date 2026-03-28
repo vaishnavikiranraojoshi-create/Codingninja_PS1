@@ -1,40 +1,41 @@
-We built this project to answer a simple but important question: is a product truly sustainable, or is it just greenwashing? 
-Our tool combines rule‑based checks with machine learning to give clear, transparent answers.
+                                           Green‑Truth Auditor
+Dataset and Preprocessing:
+We built a custom dataset of product claims to simulate real‑world sustainability marketing:
+Marketing Fluff claims: Written with vague buzzwords like eco‑friendly, natural, sustainable, planet‑safe.
+Evidence‑Based claims: Referenced verifiable certifications such as FSC, GOTS, B‑Corp, Fairtrade.
 
-#Datasets and Preprocessing
-Instead of relying on a massive dataset, we created a focused collection of product claims:
--Some were written with marketing buzzwords like eco‑friendly, natural, sustainable.
-Others referenced real certifications such as FSC, GOTS, B‑Corp.
-We then applied basic preprocessing:
-- Lowercasing and cleaning text.
-- Matching words against curated lists of buzzwords and certifications.
-- Adding synthetic examples to balance the dataset so both “fluff” and “evidence” claims are represented fairly.
+Preprocessing steps:
+- Text cleaning (lowercasing, punctuation removal).
+- Keyword matching against curated lists of buzzwords and certifications.
+- Synthetic examples added to balance the dataset so both classes are represented fairly.
 
-This lightweight approach makes the system easy to understand and quick to run, while still being effective.
+This lightweight dataset makes the system easy to run while still demonstrating greenwashing detection effectively
 
-#Model and Performance
-At the heart of the system is RoBERTa‑large‑MNLI, a Natural Language Inference model from Hugging Face.
-- We use it as a fallback classifier when no buzzwords or certifications are detected.
-- On our test set of claims, it achieved about 85% accuracy, with balanced precision and recall.
+Model Used and Performance:
+- Backend Model: Hugging Face’s roberta-large-mnli (Natural Language Inference).
+- Purpose: Used as a fallback classifier when no buzzwords or certifications are detected.
 
-The rule‑based layer ensures stricter detection of vague claims, while the ML model adds flexibility when rules alone aren’t enough.
+ Performance Metrics:
+- Accuracy on test claims: ~85%.
+- Precision and recall balanced across “Evidence‑Based” and “Marketing Fluff.
 
-# Key Features
-- Buzzword Detection: Flags vague terms like eco‑friendly, natural, sustainable.
-- Certification Recognition: Identifies credible standards such as FSC, GOTS, B‑Corp, Fairtrade.
+Key Feature
+- Buzzword Detection: Flags vague sustainability terms (eco‑friendly, natural, sustainable).
+- Certification Recognition: Identifies credible standards (FSC, GOTS, B‑Corp, Fairtrade, etc.).
+- Explainability: Outputs classification, buzzwords found, certifications found, and reasoning.
 - Hybrid Logic: Combines rule‑based checks with ML fallback for robustness.
-- Explainability: Every output includes classification, buzzwords found, certifications found, and reasoning.
-- Interactive Demo: A Gradio interface lets anyone paste a claim and instantly see results.
+- Interactive Frontend: Gradio interface provides a live demo link for judges to test claims instantly.
 
-#Model Architecture 
-The design is simple but powerful:
-- Rule‑Based Layer: Keyword matching for buzzwords and certifications.
+Model Architecture
+- Rule‑Based Layer: Keyword matching for buzzwords and certifications
 - ML Layer: RoBERTa compares claims against a reference fact (“This product is certified and evidence‑based”).
-- Decision Flow:
-- Certifications present → Evidence‑Based
+
+  Decision Flow:
+- Certifications present --> Evidence‑Based
 - Buzzwords present → Marketing Fluff
-- Neither → ML model decides (Entailment/Contradiction/Neutral).
-- Frontend: Gradio app provides a judge‑friendly demo link.
+- Neither → ML model decides (Entailment / Contradiction / Neutral).
+- Frontend: Gradio app provides a judge‑friendly demo link with clear outputs.
 
 
-Greenwashing is everywhere. By combining clear rules with machine learning intelligence, our auditor makes sustainability claims more transparent.
+Greenwashing is everywhere. By combining clear rules with machine learning intelligence, our auditor makes sustainability claims more transparent. It doesn’t just say yes or no — it explains why. That’s what makes it useful, trustworthy, and impactful.
+
