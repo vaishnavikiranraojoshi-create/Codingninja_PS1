@@ -1,12 +1,11 @@
-!pip install transformers pandas streamlit gradio beautifulsoup4 requests
+!pip install transformers pandas gradio streamlit beautifulsoup4 requests
 
 import pandas as pd
 from transformers import pipeline
-import re
-import streamlit as st
 import gradio as gr
+import re
 
-# Expanded buzzword list
+# Expanded buzzword list (common greenwashing terms)
 buzzwords = [
     "eco-friendly", "natural", "green", "sustainable", "planet-safe", "earth-friendly",
     "environmentally conscious", "biodegradable", "organic", "eco-conscious", "responsible",
@@ -14,21 +13,20 @@ buzzwords = [
     "better for the planet", "low impact", "green choice", "eco option"
 ]
 
-# Certification keywords
+# Certification keywords (verifiable standards)
 certifications = [
     "FSC", "GOTS", "B-Corp", "Fairtrade", "USDA Organic", "Cradle-to-Cradle",
     "ISO 14001", "LEED", "Energy Star", "Rainforest Alliance", "CarbonNeutral",
     "OEKO-TEX", "EPEAT", "Green Seal"
 ]
 
-# Hugging Face NLI model
-classifier = pipeline("text-classification", model="roberta-large-mnli")
-
 def detect_buzzwords(text):
     return [word for word in buzzwords if word.lower() in text.lower()]
 
 def detect_certifications(text):
     return [c for c in certifications if c.lower() in text.lower()]
+
+classifier = pipeline("text-classification", model="roberta-large-mnli")
 
 def classify_claim(text):
     reference = "This product is certified and evidence-based."
@@ -40,6 +38,7 @@ def classify_claim(text):
         return "Evidence-Based"
     else:
         return "Unverifiable"
+
 
 def audit_product(text):
     buzz = detect_buzzwords(text)
@@ -64,13 +63,13 @@ def audit_product(text):
         "Reasoning": reasoning
     }
 
-# Quick tests
+
 print(audit_product("This shirt is eco-friendly and natural."))
 print(audit_product("This cotton is GOTS-certified and produced by a B-Corp brand."))
 print(audit_product("Our packaging is 100% recyclable and FSC-certified."))
 print(audit_product("Made with sustainable materials for a greener future."))
 
-# Gradio frontend
+
 def audit_interface(text):
     result = audit_product(text)
     return (
@@ -84,7 +83,7 @@ demo = gr.Interface(
     fn=audit_interface,
     inputs="text",
     outputs="text",
-    title="🌱 Green-Truth Auditor",
+    title=" Green-Truth Auditor",
     description="Classify product claims as Marketing Fluff or Evidence-Based"
 )
 
