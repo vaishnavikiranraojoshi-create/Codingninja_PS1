@@ -1,6 +1,7 @@
-                                           Green‑Truth Auditor
+                                      Green‑Truth Auditor
 Dataset and Preprocessing:
-We built a custom dataset of product claims to simulate real‑world sustainability marketing:
+We built a custom dataset of product claims to simulate real‑world sustainability marketing
+
 Marketing Fluff claims: Written with vague buzzwords like eco‑friendly, natural, sustainable, planet‑safe.
 Evidence‑Based claims: Referenced verifiable certifications such as FSC, GOTS, B‑Corp, Fairtrade.
 
